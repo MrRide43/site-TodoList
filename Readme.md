@@ -77,6 +77,9 @@ C:/xampp/htdocs/
 
 Copie `config.example.php` et renomme la copie en `config.php` :
 
+```bash
+cp config.example.php config.php
+```
 
 Paramètres XAMPP par défaut (rien à modifier normalement) :
 
