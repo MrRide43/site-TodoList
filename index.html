@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">   
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miniblog</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <!-- ============================================================
+     Section authentification (login / register)
+     Visible quand l'utilisateur n'est pas connecté
+     caché en CSS par defaut pour l'afficher avec JavaScript au besoin    
+    ==============================================================-->
+    <section id="authSection">
+
+        <div class="auth_container">
+
+            <h1 class="auth_title">Miniblog</h1>
+
+            <!-- Onglet pour switcher entre login / register -->
+            <div class="auth_tabs">
+
+                <button class="tab-btn active" data-tab="login">Connexion</button>
+                <button class="tab-btn" data-tab="register">Inscription</button>
+
+            </div>
+            
+            <!-- Message d'erreur caché -->
+            <div id="authError" class="error_msg" style="display: none;"></div>
+
+            <!-- Formulaire de login -->
+            <form id="loginForm" class="auth_form">
+
+                <div class="form_group">
+                    <label class="form_group" for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="loginEmail" placeholder="Email" required>
+                </div>
+
+                <div class="form_group">
+                    <label class="form_group" for="loginPassword">Mot de passe</label>
+                    <input type="password" id="loginPassword" name="loginPassword" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn_primary">Se connecter</button>
+
+            </form>
+
+            <!-- Formulaire d'inscription (cachée par defaut) -->
+            <form id="registerForm" class="auth_form" style="display: none;">
+
+                <div class="form_group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" name="registerEmail" placeholder="Email" required>
+                </div>
+
+                <div class="form_group">
+                    <label for="registerPassword">Mot de passe</label>
+                    <input type="password" id="registerPassword"  placeholder="••••••••" required minlength="6">
+                </div>
+
+                <button type="submit" class="btn_primary">Créer mon compte</button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+    <!-- ============================================================
+     Section principale de l'application
+     Visible quand l'utilisateur est connecté
+     caché en CSS par defaut pour l'afficher avec JavaScript au besoin
+    ==============================================================-->
+
+    <section id="appSection" style="display: none;">
+
+        <!-- HEADER -->
+        <header class="app_header">
+
+            <h1>Miniblog</h1>
+            <div class="header_right">
+
+                <span id="userEmail"></span>
+                <button id="logoutBtn" class="btn_secondary">Se déconnecter</button>
+
+            </div>
+        </header>
+
+        <main class="app_main">
+        
+        <!-- Formulaire d'ajout de note -->
+    
+        <section class="add_task_section">
+
+            <h2>Nouvelle tâches</h2>
+
+            <form id="taskForm">
+
+                <div class="form_group">
+                    <label for="taskTitle">Titre *</label>
+                    <input type="text" id="taskTitle" placeholder="Nom de la tâche" required>
+                </div>
+
+                <div class="form_group">
+                    <label for="taskDescription">Description</label>
+                    <textarea id="taskDescription" rows="3" placeholder="Description optionnelle"></textarea>
+                </div>
+                <div class="form_row">
+
+                    <div class="form_group">
+                        <label for="taskDueDate">Date d'échéance</label>
+                        <input type="date" id="taskDueDate">
+                    </div>
+
+                    <div class="form_group">
+                        <label for="taskPriority">Priorité</label>
+                        <select id="taskPriority">
+                            <option value="low">Basse</option>
+                            <option value="normal">Moyenne</option>
+                            <option value="high">Haute</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- Champ cachée: contient l'ID quandon est en mode édition -->
+                <input type="hidden" id="taskId" value="">
+
+                <div class="form_actions">
+                    <button type="submit" id="taskSubmitBtn" class="btn_primary">Ajouter tâche</button>
+                    <button type="button" id="cancelEditBtn" class="btn_secondary" style="display: none;">Annuler</button>
+                </div>
+            </form>
+
+        </section>
+
+        <!-- ------------------------
+        Filtres et tri 
+        ------------------------- -->
+
+        <section class="filters_section">
+            <div class="filters_row">
+                
+                <div class="filter_group">
+
+                    <label>statut</label>
+                    <select id="filterStatut">
+                        <option value="toutes">Toutes</option>
+                        <option value="en_cours">En cours</option>
+                        <option value="terminees">Terminées</option>
+                    </select>
+
+                </div>
+
+                <div class="filter_group">
+
+                    <label>priorité</label>
+                    <select id="filterPriorite">
+                        <option value="toutes">Toutes</option>
+                        <option value="low">Basse</option>
+                        <option value="normal">Moyenne</option>
+                        <option value="high">Haute</option>
+                    </select>
+                </div>
+
+                <div class="filter_group">
+
+                    <label>Trie par</label>
+                    <select id="filterTri">
+                        <option value="created_at">Date de création</option>
+                        <option value="due_date">Date d'échéance</option>
+                        <option value="priority">Priorité</option>
+                    </select>
+                </div>
+
+                <div class="filter_group">
+                    <label>Par page</label>
+                    <select id="filterParPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ----------------------------------------
+                 Liste des tâches
+            ----------------------------------------- -->
+        <section class="tasks_section">
+
+            <!-- Message de chargement -->
+            <div id="tasksLoading" class="loading_msg">
+                Chargement des tâches...
+            </div>
+
+            <!-- Message si aucune tâche -->
+            <div id="tasksEmpty" class="empty_msg" style="display:none;">
+                Aucune tâche trouvée.
+            </div>
+
+            <!-- Conteneur des tâches, rempli par JavaScript -->
+            <div id="tasksList"></div>
+
+            <!-- ----------------------------------------
+                    Pagination
+            ----------------------------------------- -->
+            <div id="pagination" class="pagination" style="display:none;">
+                <button id="prevPage" class="btn_page">← Précédent</button>
+                <span id="pageInfo"></span>
+                <button id="nextPage" class="btn_page">Suivant →</button>
+            </div>
+
+        </section>
+        </main>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>
