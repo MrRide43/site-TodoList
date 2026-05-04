@@ -325,6 +325,7 @@ body {
     padding: 16px 20px;
     border-left: 4px solid var(--border);
     transition: transform 0.15s, box-shadow 0.15s;
+    margin-bottom: 1em;
 }
 
 .task-card:hover {
