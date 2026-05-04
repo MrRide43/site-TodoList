@@ -208,7 +208,7 @@ function renderTasks(task) {
         </span>` : '';
         
     return `
-        <div class="${classes}" data-id="${task.id}">
+        <div class="${classes}" data-id="${task.id}" data-due-date="${task.due_date || ''}" data-priority="${task.priority}">
 
             <div class="task-header">
                 <input 
@@ -369,11 +369,16 @@ function setupTaskListeners() {
 function startEditTask(id) {
     const card = document.querySelector(`.task-card[data-id="${id}"]`);
 
+    console.log("card trouvé :", card);
+    console.log("due-date brute :", card.dataset.dueDate);
+    console.log("priority brute :", card.dataset.priority);
+
     //on remplie le formulaire avec les données de la tâche
     document.getElementById("taskId").value = id;
     document.getElementById("taskTitle").value = card.querySelector(".task-title").textContent;
     document.getElementById("taskDescription").value = card.querySelector(".task-description")?.textContent ?? '';
-
+    document.getElementById('taskDueDate').value = card.dataset.dueDate.trim();
+    document.getElementById('taskPriority').value = card.dataset.priority;
 
     //Changer le texte du bouton pour afficher Annuler
     document.getElementById("taskSubmitBtn").textContent = "enregistrer les modifications";
